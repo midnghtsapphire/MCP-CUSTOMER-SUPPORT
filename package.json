@@ -1,0 +1,14 @@
+{
+  "name": "mct-customer-support",
+  "version": "1.0.0",
+  "description": "MCT module for CUSTOMER-SUPPORT",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "jest",
+    "setup": "npm install && npx drizzle-kit push:pg"
+  },
+  "keywords": ["mct", "api", "microservice"],
+  "license": "MIT"
+}
