@@ -1,14 +1,82 @@
 {
   "name": "mct-customer-support",
   "version": "1.0.0",
-  "description": "MCT module for CUSTOMER-SUPPORT",
+  "description": "MCP Server for Customer Support",
   "main": "dist/index.js",
   "scripts": {
+    "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "tsx watch src/index.ts",
-    "test": "jest",
-    "setup": "npm install && npx drizzle-kit push:pg"
+    "dev": "ts-node src/index.ts"
   },
-  "keywords": ["mct", "api", "microservice"],
-  "license": "MIT"
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^2.1.0",
+    "express": "^4.17.1",
+    "pg": "^8.5.1",
+    "axios": "^0.21.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.5",
+    "ts-node": "^9.0.0",
+    "@types/node": "^14.14.6",
+    "@types/express": "^4.17.8"
+  },
+  "type": "module"
+}
+### src/index.ts
+import express from 'express';
+import { mcpServer } from './mct/server';
+import setupRoutes from './api/routes';
+const app = express();
+const port = process.env.PORT || 3000;
+app.use(express.json());
+setupRoutes(app);
+mcpServer.listen();
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+### src/api/routes.ts
+import { Express } from 'express';
+export default function setupRoutes(app: Express) {
+  app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+  });
+}
+### src/db/schema.ts
+// This is a placeholder for the database schema setup
+// Normally you would use a tool like Sequelize or TypeORM here
+export const initDb = () => {
+  console.log('Database schema initialized.');
+}
+### src/mct/server.ts
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { registerSupportTools } from './tools';
+export const mcpServer = new McpServer({
+  name: "mct-customer-support",
+  version: "1.0.0"
+});
+registerSupportTools(mcpServer);
+### src/mct/tools.ts
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { handleCustomerQuery } from '../services/customerService';
+export function registerSupportTools(server: McpServer) {
+  server.registerTool("fetchCustomerData", {
+    title: "Fetch Customer Data",
+    description: "Retrieves customer data by ID",
+    inputSchema: { customerId: 'string' },
+    outputSchema: { customerData: 'object' }
+  }, async ({ customerId }) => {
+    return handleCustomerQuery(customerId);
+  });
+}
+### src/services/customerService.ts
+export async function handleCustomerQuery(customerId: string) {
+  // Placeholder for actual logic to fetch customer data
+  // For example, querying a database or calling another API
+  return {
+    customerData: {
+      id: customerId,
+      name: "John Doe",
+      status: "Active"
+    }
+  };
 }
