@@ -33,3 +33,12 @@ Universal OZ - Multi-Model AI Orchestration System
 ## License
 
 MIT
+
+---
+
+## Test
+
+| Feature | Status |
+|---------|--------|
+| MCP Server | ✅ Ready |
+
